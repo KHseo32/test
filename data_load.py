@@ -25,3 +25,23 @@ def data_load(_path,_end='csv'):
         result = pd.concat([result, df],
                            axis=0, ignore_index=True)
     return result
+
+def load_folder(folder):
+    file_list = glob.glob(folder + '/*.*') 
+    for file in file_list:
+        folder_path, name = os.path.split(file)
+        head, tail = os.path.splitext(name)
+        if tail == '.csv':
+            df = pd.read_csv(file)
+        elif tail == '.json':
+            df = pd.read_json(file)
+        elif tail == '.xml':
+            df = pd.read_xml(file)
+        elif tail in ['.xlsx', '.xls']:
+            df = pd.read_excel(file)
+        else:
+            print(f"지원되지 않는 확장자: {tail}")
+            continue
+
+        globals()[f'"{head}"'] = df.copy()
+    print('Folder loaded')
