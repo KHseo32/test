@@ -39,8 +39,8 @@ def data_load(_path, _end = 'csv'):
         # 파일명의 확장자가 유저가 입력한 확장자와 같다면 
         if file.endswith(_end):
             try: 
-                df = read_df(_path+file)                                                   # 이걸 시도
-            except:                                                                        # 실패하면 아래를 시도
+                df = read_df(_path+file)                                                   
+            except:                                                                       
                 try:
                     df = read_df(_path+file, 'CP949')
                 except:                                                                       
@@ -54,10 +54,11 @@ def data_load(_path, _end = 'csv'):
 def data_load2(_path):
     # 입력받은 경로를 기준으로 파일의 목록을 모두 로드한다.
     file_list = glob(_path+'/*.*')
-    # 반복 실행 file_list를 이용하여 
+    # 반복 실행 file_list를 이용하여
+    result = {}
     for file in file_list:
         # 경로와 파일명을 나눠준다.
-        foler, name = os.path.split(file)
+        folder, name = os.path.split(file)
         # 파일명에서 이름과 확장자를 나눠준다.
         head, tail = os.path.splitext(name)
         # tail의 형태는 : ".확장자"
@@ -68,9 +69,9 @@ def data_load2(_path):
                 df = read_df(file, 'CP949')
             except:                                                                       
                 df = read_df(file, 'EUC-KR')  
-        if df:
-            globals()[f"{head}"] = df.copy()
+        if len(df) !=0:
+            result[f"{head}"] = df.copy()
             print(f"{head} 전역변수 저장 완료")
         else:
-            print("지원하지 않는 확장자 파일")                                 # 여기서는 continue 왜 안쓰는 지 확인 녹음 4:11, 밑에 코드가 없으므로 쓰나 안쓰나 똑같다.
-    return f"{_path} 파일의 목록 저장 완료"
+            print("지원하지 않는 확장자 파일")               
+    return result
