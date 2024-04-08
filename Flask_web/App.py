@@ -1,6 +1,6 @@
 ## 기본적인 웹서버 설정
 ## flask 웹프레임워크를 로드
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 ## module 로드
 import database
 
@@ -60,6 +60,30 @@ def login():
 # 로그인이 성공하는 조건 : result 데이터가 존재할 때
     if result:
         return "로그인 성공"
+    else:
+        return redirect('/second')
+
+# 127.0.0.1 : 5000/login2 [post] 주소 생성
+@app.route('/login2', methods=['post'])
+def login2():
+    # get 방식으로 데이터를 보내는 경우 -> request.args
+    # post 방식으로 데이터를 보내는 경우 -> request.form
+    req = request.form
+    print('post 방식 데이터 :', req)
+    _id = req['input_id']
+    _pw = req['input_password']
+    print(f'유저가 보낸 아이디 : {_id}  비밀번호 : {_pw}')
+    query = """
+        SELECT * FROM `user` WHERE `id` = %s AND `password` = %s
+    """
+    result = _db.sql_query(query, _id, _pw)
+    if result:
+        # return "로그인 성공"
+        # 로그인 성공시 main.html을 되돌려준다.
+        # 로그인 정보 중 유저의 이름을 변수에 저장
+        user_name = result[0]['name']
+        print("로그인을 한 유저의 이름 : ", user_name)
+        return render_template('main.html', _name = user_name)
     else:
         return redirect('/second')
 
