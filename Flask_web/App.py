@@ -9,7 +9,13 @@ import database
 ## 생성자 함수 필수 인자 : 파일의 이름(app.py)
 ## __name__ : 현재 파일의 이름
 app = Flask(__name__)
-
+## database에 있는 MYDB1 Class 생성
+_db = database.MyDB1(
+    _host = '172.30.1.63',
+    _user = 'ubion',
+    _pw = '1234',
+    _db = 'ubion'
+)
 ## 주소 생성(api 생성)
 ## localhost : 5000/ 요청시 index 함수 호출
 @app.route('/')
@@ -36,15 +42,26 @@ def login():
     print(req)
     # 유저가 보낸 아이디와 비밀번호 변수에 저장
     _id = req['input_id']
-    _password = req['input_password']
-    print(f'유저가 보낸 아이디 : {_id}   비밀번호 : {_password}')
+    _pw = req['input_password']
+    print(f'유저가 보낸 아이디 : {_id}   비밀번호 : {_pw}')
     ## _id가 test이고 _password가 1111인 경우 로그인 성공 메세지 리턴
-    if(_id == 'test') & (_password == '1111'):
-        return "로그인 성공"
+    # if(_id == 'test') & (_password == '1111'):
+    #     return "로그인 성공"
     ## 실패한 경우 로그인 페이지(/second)로 되돌아간다.
-    else :
+    # else :
+    #     return redirect('/second')
+    ## 유저가 보낸 데이터를 DB server의 정보와 비교
+    query = """
+        SELECT * FROM `user` WHERE `id` = %s AND `password` = %s
+    """
+# _db 안에 있는 sql_query() 함수를 호출
+    result = _db.sql_query(query, _id, _pw)
+    print(result)
+# 로그인이 성공하는 조건 : result 데이터가 존재할 때
+    if result:
+        return "로그인 성공"
+    else:
         return redirect('/second')
-
 
 ## Flask Class 안에 있는 (웹서버 구동)함수 호출
 app.run(debug=True)

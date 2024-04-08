@@ -1,6 +1,6 @@
 import pymysql
 
-class myDB:
+class MyDB1:
     def __init__(
             self,
             _host = 'localhost',
@@ -15,19 +15,19 @@ class myDB:
         self.pw = _pw
         self.db = _db
     def sql_query(self, _sql, *_values):
-        mydb = pymysql.connect(
+        MyDB1 = pymysql.connect(
             host = self.host,
             port = self.port,
             user = self.user,
             password = self.pw,
             db = self.db
         )
-        cursor = mydb.cursor(pymysql.cursors.DictCursor)
+        cursor = MyDB1.cursor(pymysql.cursors.DictCursor)
         cursor.execute(_sql, _values)
         if _sql.lower().strip().startswith('select'):
             result = cursor.fetchall()
         else:
-            mydb.commit()
+            MyDB1.commit()
             result = 'Commit Succesfully'
-        mydb.close()
+        MyDB1.close()
         return result
