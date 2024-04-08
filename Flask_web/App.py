@@ -1,6 +1,9 @@
 ## 기본적인 웹서버 설정
 ## flask 웹프레임워크를 로드
 from flask import Flask, render_template, request, redirect
+## module 로드
+import database
+
 
 ## Flask라는 Class 생성
 ## 생성자 함수 필수 인자 : 파일의 이름(app.py)
@@ -31,7 +34,16 @@ def login():
     ## request.args : 유저가 서버에게 get 방식으로 보낸 데이터가 저장되어 있는 공간
     req = request.args
     print(req)
-    return ''
+    # 유저가 보낸 아이디와 비밀번호 변수에 저장
+    _id = req['input_id']
+    _password = req['input_password']
+    print(f'유저가 보낸 아이디 : {_id}   비밀번호 : {_password}')
+    ## _id가 test이고 _password가 1111인 경우 로그인 성공 메세지 리턴
+    if(_id == 'test') & (_password == '1111'):
+        return "로그인 성공"
+    ## 실패한 경우 로그인 페이지(/second)로 되돌아간다.
+    else :
+        return redirect('/second')
 
 
 ## Flask Class 안에 있는 (웹서버 구동)함수 호출
