@@ -83,9 +83,25 @@ def login2():
         # 로그인 정보 중 유저의 이름을 변수에 저장
         user_name = result[0]['name']
         print("로그인을 한 유저의 이름 : ", user_name)
-        return render_template('main.html', _name = user_name)
+        return redirect('/board')
     else:
         return redirect('/second')
+    
+## 게시글을 보여주는 주소 생성
+@app.route('/board')
+def board():
+     # DB server에 있는 board table에 정보 로드
+    query = """
+        SELECT
+        `No`, `title`, `writer`, `create_dt`
+        FROM
+        `board`
+        ORDER BY
+        `No` DESC
+    """
+    result = _db.sql_query(query)
+    print('board table의 data : ', result)
+    return render_template('main.html', _data = result, _cnt = len(result))
 
 # 회원가입 화면을 보여주는 주소를 생성
 @app.route('/signup')
@@ -144,7 +160,24 @@ def save_content():
     """
     result=_db.sql_query(query, _title, _writer, _time, _content)
     print("DB server의 결과 :", result)
-    return "작성완료"
+    return redirect('/board')
 
+# 게시글 하나의 정보를 출력하는 주소 생성
+@app.route('/read')
+def read():
+    _no = request.args['No']
+    print(_no)
+    query ="""
+        SELECT
+        `title`, `writer`, `content`
+        FROM
+        `board`
+        WHERE
+        `No`   = %s
+    """
+    result = _db.sql_query(query, _no)     # data의 형태는 [{}]
+    data = result[0]                       # data의 형태{}로 변형
+    print(data)
+    return render_template('view_content.html', _data = data)
 ## Flask Class 안에 있는 (웹서버 구동)함수 호출
 app.run(debug=True)

@@ -8,11 +8,16 @@
     <link
     href="{{url_for('static', filename= 'css/bootstrap.min.css')}}"
     rel="stylesheet">
+    <script>
+        function view(no){
+            location.href = '/read?No='+ no
+        }
+    </script>
 </head>
 <body>
     <!-- 로그인 성공시 나타나는 화면 -->
     <h1>main page</h1>
-    <p>{{_name}}님, 안녕하세요!</p>
+    
     <!-- 글쓰기 버튼 생성 -->
     <!-- <button class = "btn btn-primary">글쓰기</button> -->
     <a href="/write" class = "btn btn-primary">글쓰기</a>
@@ -27,6 +32,24 @@
             <th>작성자</th>
             <th>작성시간</th>
         </tr>
+        <!-- app.py에서 _data 변수의 이름으로 데이터 제공 -->
+        <!-- _data의 형태는
+            [{
+            'No' : xx,
+            'title' : xxxx,
+            'writer' : xxxx,
+            'create_dt' : xxxx
+            }, ....] -->
+        <!-- 반복문 실행 -->
+        {% for i in range(0,_cnt, 1) %}
+        <tr onclick="view({{_data[i]['No']}})">
+            <td>{{_data[i]['No']}}</td>
+            <td>{{_data[i]['title']}}</td>
+            <td>{{_data[i]['writer']}}</td>
+            <td>{{_data[i]['create_dt']}}</td>
+        </tr>
+    {% endfor %}
+        <!-- 반복문 종료 -->    
     </table></div>
 </body>
 </html>
