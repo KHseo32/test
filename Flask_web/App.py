@@ -87,5 +87,38 @@ def login2():
     else:
         return redirect('/second')
 
+# 회원가입 화면을 보여주는 주소 생성
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+# 회원의 정보를 받아오는 주소 생성
+# 127.0.0.1:5000/signup2 ['post']
+@app.route('/signup2', methods=['post'])
+def signup2():
+    # 유저가 보낸 정보 확인 -> 변수에 저장
+    # 유저가 보낸 정보 -> request안에서 dict의 형태로 구성
+    # {key(input 태그에 있는 name 속성의 값) : value(input 태그에 유저가 입력한 데이터)}
+    # post 방식으로 데이터를 보내면 request안에 form에 데이터 존재
+    req = request.form
+    print('회원가입 데이터 : ', dict(req))
+    _id = req['input_id']
+    _pw = req['input_password']
+    _name = req['input_name']
+    print('회원의 ID', _id, '비밀번호', _pw, '이름', _name)
+    ## 받아온 회원 정보를 DB에 INSERT문 실행
+    query = """
+        INSERT INTO
+        `user` (`id`, `password`, `name`)
+        VALUES (%s, %s, %s)
+    """
+    try:
+        result = _db.sql_query(query, _id, _pw, _name)
+        print(result)
+        # 회원가입이 완료되었으면
+        return redirect('/second')
+    except:
+        return 'ID 중복'
+
+
 ## Flask Class 안에 있는 (웹서버 구동)함수 호출
 app.run(debug=True)
