@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 ## module 로드
 import database
-
+from datetime import datetime
 
 ## Flask라는 Class 생성
 ## 생성자 함수 필수 인자 : 파일의 이름(app.py)
@@ -118,7 +118,33 @@ def signup2():
         return redirect('/second')
     except:
         return 'ID 중복'
-
+# 글쓰기 화면을 보여주는 주소 생성
+@app.route('/write')
+def write():
+    return render_template('write.html')
+# 유저가 보내는 글의 정보를 DB 서버에 저장하는 주소
+@app.route('/save_content', methods=['post'])
+def save_content():
+    # 유저가 보낸 글의 정보를 확인하고 변수에 저장
+    req =request.form
+    _title = req['input_title']
+    _writer = req['input_writer']
+    _content = req['input_content']
+    print('글제목 : ', _title)
+    print('작성자 : ', _writer)
+    print('본문 : ', _content)
+    # 현재 시간
+    _time = datetime.now()
+    print('현재시간 : ', _time)
+    # DB server에 데이터를 저장
+    query = """
+        INSERT INTO
+        `board`(`title`, `writer`, `create_dt`, `content`)
+        VALUES(%s, %s, %s, %s)
+    """
+    result=_db.sql_query(query, _title, _writer, _time, _content)
+    print("DB server의 결과 :", result)
+    return "작성완료"
 
 ## Flask Class 안에 있는 (웹서버 구동)함수 호출
 app.run(debug=True)
