@@ -11,7 +11,7 @@ from datetime import datetime
 app = Flask(__name__)
 ## database에 있는 MYDB1 Class 생성
 _db = database.MyDB1(
-    _host = '172.30.1.55',
+    _host = '172.30.1.22',
     _user = 'ubion',
     _pw = '1234',
     _db = 'ubion'
